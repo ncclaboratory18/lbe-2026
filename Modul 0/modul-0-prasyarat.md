@@ -1,12 +1,12 @@
 # Modul 0 - Prasyarat
 
-**Kerjakan sebelum Pertemuan 1.** Secara mandiri.
+**Kerjakan sebelum Pertemuan 1.**
 
 Kalau ada yang macet, **tanya di grup/pc sebelum Pertemuan 1**, bukan pas hari-H.
 
 ---
 
-## Apa saja yang disiapkan (dan kenapa)
+## Apa saja yang disiapkan
 
 | No | Yang disiapkan | Kegunaan | Dipakai di |
 |----|----------------|----------|------------|
@@ -236,8 +236,6 @@ git --version
 git version 2.34.1
 ```
 
-**Ini salah satu screenshot yang harus dikumpulkan.**
-
 ### Atur identitas Git 
 
 ```bash
@@ -263,8 +261,6 @@ Akun ini dibutuhkan untuk meng-clone aplikasi contoh, dan untuk stretch goal CI/
    ```bash
    git clone https://github.com/ncclaboratory18/lbe-2026
    ```
-
-   Kalau berhasil tanpa error, berarti sudah beres.
 
 **Opsional:** dengan email ITS kamu juga bisa mengajukan [GitHub Student Developer Pack](https://education.github.com/pack) - Copilot gratis, private repo, dan sejumlah kredit layanan lain. Tidak wajib untuk lab ini.
 
