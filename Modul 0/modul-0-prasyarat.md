@@ -2,7 +2,7 @@
 
 **Kerjakan sebelum Pertemuan 1.**
 
-Kalau ada yang macet, **tanya di grup/pc sebelum Pertemuan 1**, bukan pas hari-H.
+Kalau ada yang macet, tanya di grup/pc sebelum Pertemuan 1.
 
 ---
 
