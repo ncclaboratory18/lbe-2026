@@ -1,4 +1,4 @@
-> **NOTE: This Bahasa Indonesia version is translated by AI. Some words may be confusing. Consider reading the original document in [README_EN.md](./README_EN.md) instead.**
+> **NOTE: This Bahasa Indonesia version is translated by AI. Some words might sound a bit weird/odd. Consider reading the original document in [README_EN.md](./README_EN.md) instead.**
 
 # Modul 3: Load Balancing dengan Azure
 
@@ -488,20 +488,3 @@ Pada akhir sesi ini, setiap tim semestinya telah mampu menghasilkan:
 4. Sebuah *load balancer* yang bekerja (working) dengan keberadaan dari *backend pool* dalam kondisi sehat (*healthy*)
 5. Sebuah tangkapan layar atau rekaman dari terminal berkenaan dengan `curl` loop terhadap `/config.js` di mana merekam bahwa permintaan (requests) direspons (answered) oleh *hostname* milik lebih dari satu VM
 6. (Opsional) Sebuah tangkapan layar yang menampilkan keberadaan *backend pool* memberikan label (marking) secara tepat bagi sebuah *instance* terhenti (stopped instance) selaku sebuah komponen yang rusak (*unhealthy*)
-
----
-
-## 18. Saran Waktu
-
-| Bagian | Durasi yang disarankan |
-|---|---|
-| Konsep dan Penyiapan Lingkungan Tim (Bagian 0 sampai 1) | 30 menit |
-| Pembuatan VM dan verifikasi aplikasi (Bagian 2 sampai 3) | 40 menit |
-| Konfigurasi NSG (Bagian 4) | 15 menit |
-| Pembuatan load balancer (Bagian 5) | 45 menit |
-| Pengujian dan pembuktian (Bagian 6) | 20 menit |
-| Simulasi kegagalan (Bagian 7) | 15 menit |
-| Waktu luang (buffer) untuk pemecahan masalah | 15 menit |
-| **Total** | **Sekitar 3 jam** |
-
-Sesuaikan dengan ketersediaan waktu untuk pelaksanaan dari sesi Anda. Apabila ketersediaan waktu sangat mepet (short), Bagian 7 adalah poin pertama yang harus dilewatkan (*cut*), karena bersifat opsional.

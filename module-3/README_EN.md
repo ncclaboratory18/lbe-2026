@@ -486,20 +486,3 @@ By the end of this session, each team should have produced:
 4. A working load balancer with a healthy backend pool
 5. A screenshot or terminal recording of the `curl` loop against `/config.js` showing requests answered by more than one VM's hostname
 6. (Optional) A screenshot showing the backend pool correctly marking a stopped instance as unhealthy
-
----
-
-## 18. Suggested Timing
-
-| Section | Suggested duration |
-|---|---|
-| Concepts and Team Environment Setup (Parts 0 to 1) | 30 minutes |
-| VM creation and app verification (Parts 2 to 3) | 40 minutes |
-| NSG configuration (Part 4) | 15 minutes |
-| Load balancer creation (Part 5) | 45 minutes |
-| Testing and proof (Part 6) | 20 minutes |
-| Failure simulation (Part 7) | 15 minutes |
-| Buffer for troubleshooting | 15 minutes |
-| **Total** | **About 3 hours** |
-
-Adjust based on how much time your session actually has. If time is short, Part 7 is the first thing to cut, since it is optional.
