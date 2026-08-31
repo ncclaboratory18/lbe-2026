@@ -6,6 +6,8 @@
 
 ---
 
+Youtube Tutorial (No Talk): https://www.youtube.com/watch?v=CXm_ydM4YLM
+
 ## 1. Gambaran Umum
 
 Modul ini menggabungkan semua hal dari Pertemuan 1 (Azure) dan Pertemuan 2 (Docker). Setiap anggota tim memiliki mesin virtual (VM) masing-masing yang menjalankan aplikasi web berbasis Docker. Pada sesi ini, tim akan menempatkan VM tersebut di belakang satu Azure Load Balancer dan membuktikan bahwa lalu lintas (traffic) didistribusikan ke semuanya.

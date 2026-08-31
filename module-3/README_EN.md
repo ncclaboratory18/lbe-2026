@@ -4,6 +4,8 @@
 
 ---
 
+Youtube Tutorial (No Talk): https://www.youtube.com/watch?v=CXm_ydM4YLM
+
 ## 1. Overview
 
 This module ties together everything from Meeting 1 (Azure) and Meeting 2 (Docker). Each team member has their own virtual machine running a Dockerized web app. In this session, the team will place those virtual machines behind a single Azure Load Balancer and prove that traffic is being distributed across them.
