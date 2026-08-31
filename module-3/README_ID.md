@@ -1,3 +1,5 @@
+**NOTE: This Bahasa Indonesia version is translated by AI. Some words may be confusing. Consider reading the original document in [README_EN.md](./README_EN.md) instead.**
+
 # Modul 3: Load Balancing dengan Azure
 
 ## Lab Based Education, Pertemuan 3
