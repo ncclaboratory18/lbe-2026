@@ -90,9 +90,7 @@ Karena hostname disertakan pada saat kontainer dimulai (startup) alih-alih pada 
 
 Langkah ini penting karena setiap peserta kemungkinan besar membuat VM mereka sendiri di bawah langganan Azure for Students pribadi mereka selama Pertemuan 1 dan 2. Backend pool load balancer hanya dapat mencakup VM yang berada di virtual network (VNet) yang sama dengan load balancer itu sendiri. Tiga langganan pribadi yang terpisah berarti ada tiga virtual network yang terpisah secara default, dan itu tidak akan berfungsi.
 
-Setiap tim memiliki dua opsi. Pilih satu sebelum melanjutkan.
-
-### Opsi A: Resource group bersama di bawah langganan salah satu anggota tim (direkomendasikan)
+### Resource group bersama di bawah langganan salah satu anggota tim (direkomendasikan)
 
 Penting: di Azure, penagihan selalu mengikuti langganan, bukan orang yang membuat sumber daya. Ini berarti setiap VM, IP publik, dan load balancer yang dibuat di dalam resource group Pemilik Tim (Team Owner) ditagih pada saldo kredit Azure for Students milik Pemilik Tim, meskipun rekan satu tim yang mengklik "Create" (Buat) menggunakan login mereka sendiri dengan akses Contributor. Rekan tim tidak membayar secara individu untuk sumber daya yang dibuat dengan cara ini.
 
@@ -113,12 +111,6 @@ Pastikan tim menyadari hal ini sebelum memilih Pemilik Tim, dan sepakati sebagai
 Jika rekan tim mencoba membuat VM sebelum langkah ini dan melihat pesan kesalahan (error) yang menyebutkan bahwa resource provider tidak terdaftar dan mereka tidak memiliki izin untuk mendaftarkannya, ini adalah hal yang wajar. Ini berarti langkah 6 belum diselesaikan oleh Pemilik Tim. Ini bukan tanda bahwa ada hal lain yang salah dikonfigurasi.
 
 Jika organisasi Anda sudah menyediakan langganan kelas bersama atau tenant Azure AD bersama untuk workshop ini, lewati langkah 2 hingga 5 dan cukup pastikan semua orang memiliki akses Contributor ke satu resource group bersama di sana.
-
-### Opsi B: Gunakan langganan terpisah dan gunakan VNet peering (tingkat lanjut, tidak disarankan untuk sesi ini)
-
-Secara teknis, kita dapat melakukan peering virtual network di seluruh langganan yang terpisah sehingga load balancer dalam satu langganan dapat menjangkau VM di langganan lain. Ini menambah kompleksitas jaringan yang nyata (izin lintas tenant, konfigurasi peering, potensi biaya tambahan) yang bukan penggunaan waktu sesi yang baik untuk peserta pemula. Gunakan jalur ini hanya jika tim secara khusus menginginkan tantangan, dan perlakukan itu sebagai stretch goal, bukan jalur utama.
-
-**Untuk sisa panduan ini, kami mengasumsikan Opsi A: satu resource group bersama, satu virtual network bersama, semua sumber daya dibuat di dalamnya.**
 
 ---
 

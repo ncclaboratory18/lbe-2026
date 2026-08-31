@@ -90,7 +90,7 @@ This step matters because each participant likely created their own VM under the
 
 Each team has two options. Pick one before continuing.
 
-### Option A: Shared resource group under one team member's subscription (recommended)
+### Shared resource group under one team member's subscription (recommended)
 
 Important: in Azure, billing always follows the subscription, not the person who created the resource. This means every VM, public IP, and load balancer created inside the Team Owner's resource group is charged against the Team Owner's own Azure for Students credit, even when a teammate is the one who clicked Create using their own login and Contributor access. Teammates do not pay individually for anything created this way.
 
@@ -111,12 +111,6 @@ Make sure the team is aware of this before choosing a Team Owner, and agree as a
 If a teammate tries to create a VM before this step and sees an error mentioning a resource provider is not registered and they do not have permission to register it, this is expected. It means step 6 has not been completed yet by the Team Owner. It is not a sign that anything else is misconfigured.
 
 If your organization already provides a shared class subscription or a shared Azure AD tenant for the workshop, skip steps 2 through 5 and simply confirm everyone has Contributor access to one shared resource group there instead.
-
-### Option B: Keep separate subscriptions and use VNet peering (advanced, not recommended for this session)
-
-It is technically possible to peer virtual networks across separate subscriptions so that a load balancer in one subscription can reach VMs in another. This adds real networking complexity (cross-tenant permissions, peering configuration, potential extra cost) that is not a good use of limited session time for a beginner audience. Only use this path if a team specifically wants the challenge, and treat it as a stretch goal, not the main path.
-
-**For the rest of this guide, we assume Option A: one shared resource group, one shared virtual network, all resources created inside it.**
 
 ---
 
