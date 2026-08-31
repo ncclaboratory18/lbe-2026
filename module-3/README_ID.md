@@ -6,7 +6,7 @@
 
 ---
 
-Youtube Tutorial (No Talk): https://www.youtube.com/watch?v=CXm_ydM4YLM
+Youtube Tutorial (No Talking): https://www.youtube.com/watch?v=CXm_ydM4YLM
 
 ## 1. Gambaran Umum
 
