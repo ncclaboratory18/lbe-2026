@@ -4,12 +4,12 @@
 
 - [Tujuan Pembelajaran](#tujuan-pembelajaran)
 - [Dasar Cloud Computing](#dasar-dasar-cloud-computing)
-- [Apa Itu VPS?](#1-apa-itu-vps)
-- [Konsep Dasar Azure](#2-konsep-dasar-azure)
-- [Persiapan Sebelum Hands-On](#3-persiapan-sebelum-hands-on)
-- [Hands-On 1: Membuat Resource Group dan VM](#4-hands-on-1-membuat-resource-group-dan-vm)
-- [Hands-On 2: SSH ke VM](#5-hands-on-2-ssh-ke-vm)
-- [Hands-On 3: Sanity Check di Dalam VM](#6-hands-on-3-sanity-check-di-dalam-vm)
+- [Apa Itu VPS?](apa-itu-vps)
+- [Konsep Dasar Azure](konsep-dasar-azure)
+- [Persiapan Sebelum Hands-On](persiapan-sebelum-hands-on)
+- [Hands-On 1: Membuat Resource Group dan VM](hands-on-1-membuat-resource-group-dan-vm)
+- [Hands-On 2: SSH ke VM](hands-on-2-ssh-ke-vm)
+- [Hands-On 3: Sanity Check di Dalam VM](hands-on-3-sanity-check-di-dalam-vm)
 
 ## Tujuan Pembelajaran
 
@@ -105,7 +105,7 @@ VPS (Virtual Private Server) adalah satu komputer fisik (server) yang dibagi men
 
 ### Resource Group
 
-![alt text](image.png)
+![alt text](img/Resource_Group.png)
 
 Resource group adalah "wadah" atau folder logis untuk mengelompokkan resource Azure yang saling terkait (VM, storage, network, dll.) dalam satu project. Tujuannya supaya kamu bisa mengelola, memantau biaya, atau menghapus semua resource sekaligus tanpa harus mencari satu per satu.
 
@@ -145,17 +145,17 @@ Ini diatur lewat Access Control (IAM), fitur Azure untuk mengatur siapa boleh ng
 6. Klik **"+ Select members"**, ketik nama atau email akun Azure anggota kelompok, pilih dari hasil pencarian.
 7. Klik **"Review + assign"** → **"Review + assign"** .
 
-![alt text](image-19.png)
+![alt text](img/Shared%20Resource%20Group.png)
 
 ### Region
 
-![alt text](image-1.png)
+![alt text](img/Region.png)
 
 Region adalah lokasi geografis data center Azure tempat VM kamu benar-benar berjalan (misalnya Southeast Asia/Singapura, atau East US). Region mempengaruhi latency (semakin dekat ke lokasi kamu, semakin cepat responnya) dan kadang harga. Untuk latihan, pilih region terdekat dari lokasi kamu — untuk Indonesia biasanya **"Southeast Asia"**.
 
 ### VM Size / Tier
 
-![alt text](image-2.png)
+![alt text](img/VM%20.png)
 
 VM size menentukan spesifikasi virtual machine kamu: jumlah vCPU, RAM, dan kadang jenis storage yang didukung. Size ditulis dengan kode seperti `B1s`, `B2s`, `D2s_v3`, dst. Untuk belajar, kamu akan pakai `B1s` atau ukuran setara — ini adalah tier kecil yang cukup untuk eksperimen dan biasanya termasuk dalam kuota gratis/student.
 
@@ -181,30 +181,30 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
 ### Membuat Resource Group dan VM
 
 1. Login ke [portal.azure.com](https://portal.azure.com).
-   ![alt text](image-3.png)
+   ![alt text](img/HO%201.1.png)
 2. Ketik **"Resource groups"** di search bar.
-   ![alt text](image-4.png)
+   ![alt text](img/HO%201.2.png)
 3. Klik **"+ Create"**, isi nama resource group (contoh: `LBE-NCC`), pilih region **"East Asia"**, lalu klik **"Review + create"** → **"Create"**.
-   ![alt text](image-6.png)
+   ![alt text](img/HO%201.3.png)
 4. Kembali ke kolom pencarian, ketik **"Virtual machines"** lalu klik **"+ Create"** → **"Azure virtual machine"**.
-   ![alt text](image-7.png)
+   ![alt text](img/HO%201.4.png)
 5. Pada tab **Basics**, isi:
    - Resource group: pilih yang tadi dibuat
-     ![alt text](image-11.png)
+     ![alt text](img/HO%201.5.png)
    - Virtual machine name: contoh `VM_LBE_NCC`
-     ![alt text](image-12.png)
+     ![alt text](img/HO%201.6.png)
    - Region: samakan dengan resource group
-     ![alt text](image-14.png)
+     ![alt text](img/HO%201.7.png)
    - Image: pilih **"Ubuntu Server 24.04 LTS"**
-     ![alt text](image-13.png)
+     ![alt text](img/HO%201.8.png)
    - Size: klik **"See all sizes"** lalu pilih size lain yang ditandai eligible untuk student
 6. Pada bagian **Administrator account**, pilih authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
-   ![alt text](image-15.png)
+   ![alt text](img/HO%201.9.png)
 7. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
-   ![alt text](image-10.png)
+   ![alt text](img/HO%201.10.png)
 8. Klik **"Review + create"**, tunggu validasi selesai, lalu klik **"Create"**.
 9. Jangan lupa **"Download private key and create resource"** klik itu untuk mengunduh file `.pem`, lalu tunggu proses deployment.
-   ![alt text](image-16.png)
+   ![alt text](img/HO%201.11.png)
 10. Setelah selesai, buka resource VM tersebut dan catat **"Public IP address"** yang tertera di halaman Overview.
 
 ---
@@ -215,7 +215,7 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
 
 Pindahkan file `.pem` yang tadi diunduh ke folder yang mudah diakses lewat terminal, misalnya ke folder `Documents`. Copy path dari file `.pem` kalian.
 
-![alt text](image-20.png)
+![alt text](img/HO%202.1.png)
 
 ```bash
 ssh -i <Path Priveate Key> azureuser@<PUBLIC_IP>
@@ -225,7 +225,7 @@ Ganti `<PUBLIC_IP>` dengan IP yang dicatat sebelumnya.
 
 Ganti `<Path Private Key>` dengan PATH yang dicatat sebelumnya.
 
-![alt text](image-17.png)
+![alt text](img/HO%202.2.png)
 
 Saat login pertama, akan muncul pertanyaan _"Are you sure you want to continue connecting (yes/no)?"_ — ketik `yes`. Jika berhasil, prompt terminal akan berubah menampilkan nama user dan VM, menandakan kamu sekarang "berada" di dalam VM, bukan di komputer lokal lagi.
 
@@ -258,6 +258,8 @@ Buka browser di komputer lokal kamu, akses:
 ```
 http://<PUBLIC_IP>:8000
 ```
+
+![alt text](img/HO%203.1.png)
 
 Kamu akan melihat daftar file di folder VM ditampilkan sebagai halaman web. Ini menandakan VM kamu berhasil "melayani" sesuatu lewat internet.
 
