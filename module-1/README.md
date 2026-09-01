@@ -155,7 +155,7 @@ Region adalah lokasi geografis data center Azure tempat VM kamu benar-benar berj
 
 ### VM Size / Tier
 
-![alt text](img/VM%20.png)
+![alt text](img/VM%20Size.png)
 
 VM size menentukan spesifikasi virtual machine kamu: jumlah vCPU, RAM, dan kadang jenis storage yang didukung. Size ditulis dengan kode seperti `B1s`, `B2s`, `D2s_v3`, dst. Untuk belajar, kamu akan pakai `B1s` atau ukuran setara — ini adalah tier kecil yang cukup untuk eksperimen dan biasanya termasuk dalam kuota gratis/student.
 
@@ -181,30 +181,30 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
 ### Membuat Resource Group dan VM
 
 1. Login ke [portal.azure.com](https://portal.azure.com).
-   ![alt text](img/HO%201.1.png)
+   ![alt text](img/HO%201_1.png)
 2. Ketik **"Resource groups"** di search bar.
-   ![alt text](img/HO%201.2.png)
+   ![alt text](img/HO%201_2.png)
 3. Klik **"+ Create"**, isi nama resource group (contoh: `LBE-NCC`), pilih region **"East Asia"**, lalu klik **"Review + create"** → **"Create"**.
-   ![alt text](img/HO%201.3.png)
+   ![alt text](img/HO%201_3.png)
 4. Kembali ke kolom pencarian, ketik **"Virtual machines"** lalu klik **"+ Create"** → **"Azure virtual machine"**.
-   ![alt text](img/HO%201.4.png)
+   ![alt text](img/HO%201_4.png)
 5. Pada tab **Basics**, isi:
    - Resource group: pilih yang tadi dibuat
-     ![alt text](img/HO%201.5.png)
+     ![alt text](img/HO%201_5.png)
    - Virtual machine name: contoh `VM_LBE_NCC`
-     ![alt text](img/HO%201.6.png)
+     ![alt text](img/HO%201_6.png)
    - Region: samakan dengan resource group
-     ![alt text](img/HO%201.7.png)
+     ![alt text](img/HO%201_7.png)
    - Image: pilih **"Ubuntu Server 24.04 LTS"**
-     ![alt text](img/HO%201.8.png)
+     ![alt text](img/HO%201_8.png)
    - Size: klik **"See all sizes"** lalu pilih size lain yang ditandai eligible untuk student
 6. Pada bagian **Administrator account**, pilih authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
-   ![alt text](img/HO%201.9.png)
+   ![alt text](img/HO%201_9.png)
 7. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
-   ![alt text](img/HO%201.10.png)
+   ![alt text](img/HO%201_10.png)
 8. Klik **"Review + create"**, tunggu validasi selesai, lalu klik **"Create"**.
 9. Jangan lupa **"Download private key and create resource"** klik itu untuk mengunduh file `.pem`, lalu tunggu proses deployment.
-   ![alt text](img/HO%201.11.png)
+   ![alt text](img/HO%201_11.png)
 10. Setelah selesai, buka resource VM tersebut dan catat **"Public IP address"** yang tertera di halaman Overview.
 
 ---
@@ -215,7 +215,7 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
 
 Pindahkan file `.pem` yang tadi diunduh ke folder yang mudah diakses lewat terminal, misalnya ke folder `Documents`. Copy path dari file `.pem` kalian.
 
-![alt text](img/HO%202.1.png)
+![alt text](img/HO%202_1.png)
 
 ```bash
 ssh -i <Path Priveate Key> azureuser@<PUBLIC_IP>
@@ -225,7 +225,7 @@ Ganti `<PUBLIC_IP>` dengan IP yang dicatat sebelumnya.
 
 Ganti `<Path Private Key>` dengan PATH yang dicatat sebelumnya.
 
-![alt text](img/HO%202.2.png)
+![alt text](img/HO%202_2.png)
 
 Saat login pertama, akan muncul pertanyaan _"Are you sure you want to continue connecting (yes/no)?"_ — ketik `yes`. Jika berhasil, prompt terminal akan berubah menampilkan nama user dan VM, menandakan kamu sekarang "berada" di dalam VM, bukan di komputer lokal lagi.
 
@@ -259,7 +259,7 @@ Buka browser di komputer lokal kamu, akses:
 http://<PUBLIC_IP>:8000
 ```
 
-![alt text](img/HO%203.1.png)
+![alt text](img/HO%203_1.png)
 
 Kamu akan melihat daftar file di folder VM ditampilkan sebagai halaman web. Ini menandakan VM kamu berhasil "melayani" sesuatu lewat internet.
 
