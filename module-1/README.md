@@ -213,14 +213,17 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
    - Image: pilih **"Ubuntu Server 24.04 LTS"**
      ![alt text](img/HO%201_8.png)
    - Size: klik **"See all sizes"** lalu pilih size lain yang ditandai eligible untuk student
-6. Pada bagian **Administrator account**, pilih authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
-   ![alt text](img/HO%201_9.png)
-7. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
+6. Pada bagian **Administrator account**, kalian bisa memilih untuk menggunakan **"SSH public"** key atau **"password"**. Untuk keamanan lebih sebaiknya gunakan 
+   authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
+   ![alt text](img/HO%201_9.png
+   <img width="942" height="307" alt="image" src="https://github.com/user-attachments/assets/d15e8cb7-53ac-492f-8acc-8a60153c33c1" />
+
+8. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
    ![alt text](img/HO%201_10.png)
-8. Klik **"Review + create"**, tunggu validasi selesai, lalu klik **"Create"**.
-9. Jangan lupa **"Download private key and create resource"** klik itu untuk mengunduh file `.pem`, lalu tunggu proses deployment.
+9. Klik **"Review + create"**, tunggu validasi selesai, lalu klik **"Create"**.
+10. Jangan lupa **"Download private key and create resource"** klik itu untuk mengunduh file `.pem`, lalu tunggu proses deployment.
    ![alt text](img/HO%201_11.png)
-10. Setelah selesai, buka resource VM tersebut dan catat **"Public IP address"** yang tertera di halaman Overview.
+11. Setelah selesai, buka resource VM tersebut dan catat **"Public IP address"** yang tertera di halaman Overview.
 
 ---
 
