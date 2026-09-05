@@ -205,17 +205,36 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
    ![alt text](img/HO%201_4.png)
 5. Pada tab **Basics**, isi:
    - Resource group: pilih yang tadi dibuat
+     
      ![alt text](img/HO%201_5.png)
    - Virtual machine name: contoh `VM_LBE_NCC`
+     
      ![alt text](img/HO%201_6.png)
    - Region: samakan dengan resource group
+     
      ![alt text](img/HO%201_7.png)
    - Image: pilih **"Ubuntu Server 24.04 LTS"**
+     
      ![alt text](img/HO%201_8.png)
    - Size: klik **"See all sizes"** lalu pilih size lain yang ditandai eligible untuk student
-6. Pada bagian **Administrator account**, kalian bisa memilih untuk menggunakan **"SSH public"** key atau **"password"**. Untuk keamanan lebih sebaiknya gunakan 
+
+   Jika semua VM size menampilkan status "Size not available" Hal ini dapat terjadi karena subscription Azure for Students memiliki pembatasan region. Untuk mengetahui region yang diizinkan oleh subscription kalian:
+     - Ketik "Policy" pada search bar Azure Portal, kemudian buka Azure Policy.
+     - Pada menu sebelah kiri, pilih "Authoring" → "Assignments".
+     - Cari policy "Allowed resource deployment regions", kemudian buka policy tersebut.
+       
+       <img width="947" height="365" alt="image" src="https://github.com/user-attachments/assets/2d0f8c7b-dc0e-4362-90ee-36a897af7965" />
+     - Pada bagian "Parameters", lihat "Allowed locations" untuk mengetahui region yang dapat digunakan.
+       
+       <img width="945" height="250" alt="image" src="https://github.com/user-attachments/assets/8a21e523-33d3-4c79-b188-b686b800a6f5" />
+     - Kembali ke halaman pembuatan Virtual Machine, lalu pilih salah satu region yang tercantum pada "Allowed locations".
+     - Klik "See all sizes" kembali dan pilih VM size yang tersedia.
+
+    Catatan: Daftar Allowed locations dapat berbeda pada setiap subscription Azure for Students. Jika East Asia tidak tercantum dalam daftar tersebut, gunakan region lain yang tersedia pada subscription kalian.
+   
+7. Pada bagian **Administrator account**, kalian bisa memilih untuk menggunakan **"SSH public"** key atau **"password"**. Untuk keamanan lebih sebaiknya gunakan 
    authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
-   ![alt text](img/HO%201_9.png
+   ![alt text](img/HO%201_9.png)
    <img width="942" height="307" alt="image" src="https://github.com/user-attachments/assets/d15e8cb7-53ac-492f-8acc-8a60153c33c1" />
 
 8. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
