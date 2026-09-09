@@ -450,7 +450,7 @@ setelah menjalankan build \
 - jalankan container dengan docker run (disini kita buat agar port 10000 bisa mengakses port 4444 dalam container kita) \
 ![alt text](image-21.png)
 
-- Cek di web browser url: `http://localhost:10000`  \
+- Cek di web browser url: `http://localhost:10000/health`  \
 ![alt text](image-22.png)
 
 - stop container dengan: `docker stop` dan hapus container dengan: `docker rm` \
