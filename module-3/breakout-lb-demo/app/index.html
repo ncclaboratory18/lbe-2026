@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breakout - Load Balancer Demo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <span class="label">CONNECTED TO</span>
+      <span id="hostnameLabel" class="hostname">...</span>
+    </div>
+
+    <div class="game-area">
+      <canvas id="game"></canvas>
+      <div id="overlay" class="overlay hidden">
+        <div class="overlay-title" id="overlayTitle"></div>
+        <button id="restartBtn" class="restart-btn">Restart</button>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Move: Arrow Keys, A/D, or Mouse</span>
+      <span id="livesDisplay">Lives: 3</span>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
