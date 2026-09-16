@@ -205,28 +205,103 @@ Saat membuat VM di Azure, kamu akan diminta membuat key pair baru. Azure akan ot
    ![alt text](img/HO%201_4.png)
 5. Pada tab **Basics**, isi:
    - Resource group: pilih yang tadi dibuat
+     
      ![alt text](img/HO%201_5.png)
    - Virtual machine name: contoh `VM_LBE_NCC`
+     
      ![alt text](img/HO%201_6.png)
    - Region: samakan dengan resource group
+     
      ![alt text](img/HO%201_7.png)
    - Image: pilih **"Ubuntu Server 24.04 LTS"**
+     
      ![alt text](img/HO%201_8.png)
    - Size: klik **"See all sizes"** lalu pilih size lain yang ditandai eligible untuk student
-6. Pada bagian **Administrator account**, pilih authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
+
+   Jika semua VM size menampilkan status "Size not available" Hal ini dapat terjadi karena subscription Azure for Students memiliki pembatasan region. Untuk mengetahui region yang diizinkan oleh subscription kalian:
+     - Ketik "Policy" pada search bar Azure Portal, kemudian buka Azure Policy.
+     - Pada menu sebelah kiri, pilih "Authoring" → "Assignments".
+     - Cari policy "Allowed resource deployment regions", kemudian buka policy tersebut.
+       
+       <img width="947" height="365" alt="image" src="https://github.com/user-attachments/assets/2d0f8c7b-dc0e-4362-90ee-36a897af7965" />
+     - Pada bagian "Parameters", lihat "Allowed locations" untuk mengetahui region yang dapat digunakan.
+       
+       <img width="945" height="250" alt="image" src="https://github.com/user-attachments/assets/8a21e523-33d3-4c79-b188-b686b800a6f5" />
+     - Kembali ke halaman pembuatan Virtual Machine, lalu pilih salah satu region yang tercantum pada "Allowed locations".
+     - Klik "See all sizes" kembali dan pilih VM size yang tersedia.
+
+    Catatan: Daftar Allowed locations dapat berbeda pada setiap subscription Azure for Students. Jika East Asia tidak tercantum dalam daftar tersebut, gunakan region lain yang tersedia pada subscription kalian.
+   
+7. Pada bagian **Administrator account**, kalian bisa memilih untuk menggunakan **"SSH public"** key atau **"password"**. Untuk keamanan lebih sebaiknya gunakan 
+   authentication type **"SSH public key"**, biarkan Azure generate key pair baru, beri nama key pair `VM-LBE-NCC_key`.
    ![alt text](img/HO%201_9.png)
-7. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
+   <img width="942" height="307" alt="image" src="https://github.com/user-attachments/assets/d15e8cb7-53ac-492f-8acc-8a60153c33c1" />
+
+8. Pada **Inbound port rules**, pastikan port **22 (SSH)** diizinkan. Nanti di Hands-on 3 kita juga akan butuh port **8000** — boleh ditambahkan sekarang atau nanti lewat Networking tab VM.
    ![alt text](img/HO%201_10.png)
-8. Klik **"Review + create"**, tunggu validasi selesai, lalu klik **"Create"**.
-9. Jangan lupa **"Download private key and create resource"** klik itu untuk mengunduh file `.pem`, lalu tunggu proses deployment.
+9. Klik **"Review + create"**, tunggu validasi selesai, lalu klik **"Create"**.
+10. Jangan lupa **"Download private key and create resource"** klik itu untuk mengunduh file `.pem`, lalu tunggu proses deployment.
    ![alt text](img/HO%201_11.png)
-10. Setelah selesai, buka resource VM tersebut dan catat **"Public IP address"** yang tertera di halaman Overview.
+11. Setelah selesai, buka resource VM tersebut dan catat **"Public IP address"** yang tertera di halaman Overview.
+
+---
+
+## Persiapan Sebelum SSH
+
+### Mengatur Permission Private Key
+
+Sebelum bisa dipakai untuk SSH, file `.pem` perlu diatur permission-nya supaya tidak bisa dibaca sembarang user/proses lain di komputer kamu. Kalau permission-nya terlalu terbuka, SSH client (terutama di Linux/Mac) akan **menolak** memakai key itu dan muncul error seperti `Permissions 0644 for 'key.pem' are too open`.
+
+**Kenapa ini penting:** ini bentuk pengamanan tambahan — meskipun file `.pem` sudah tersimpan di komputer kamu, sistem operasi tetap memastikan cuma kamu (sebagai pemilik file) yang bisa membacanya, bukan user lain yang mungkin login di komputer yang sama.
+
+#### Linux
+
+Buka terminal, arahkan ke folder tempat `.pem` disimpan, lalu jalankan:
+
+```bash
+chmod 400 <path-to-key>.pem
+```
+
+Command ini mengatur agar file hanya bisa **dibaca oleh pemilik file**, tidak bisa ditulis atau dieksekusi siapa pun, termasuk pemilik sendiri.
+
+#### macOS
+
+Sama seperti Linux, karena macOS juga berbasis Unix:
+
+```bash
+chmod 400 <path-to-key>.pem
+```
+
+#### Windows
+
+**Cara 1 — lewat PowerShell:**
+
+```powershell
+icacls.exe <path-to-key>.pem /reset
+icacls.exe <path-to-key>.pem /grant:r "$($env:USERNAME):(R)"
+icacls.exe <path-to-key>.pem /inheritance:r
+```
+
+Command ini menghapus semua permission lama, lalu kasih akses **read-only** cuma untuk user yang sedang login, dan mematikan inheritance permission dari folder induk.
+
+**Cara 2 — lewat GUI:**
+
+1. Klik kanan file `.pem` → **Properties**
+2. Buka tab **Security** → klik **Advanced**
+3. Klik **Disable inheritance** → pilih **"Convert inherited permissions into explicit permissions on this object"**
+4. Hapus semua entry user/group kecuali akun kamu sendiri
+5. Pastikan akun kamu cuma punya akses **Read**
+6. Klik **Apply** → **OK**
+
+> Kalau permission belum diatur dan SSH gagal connect dengan pesan error soal permission, itu tandanya langkah ini belum dilakukan — bukan berarti key atau IP-nya salah.
 
 ---
 
 ## Hands on 2
 
-### SSH ke VM
+### Masuk ke VM
+
+#### PRIVATE KEY
 
 Pindahkan file `.pem` yang tadi diunduh ke folder yang mudah diakses lewat terminal, misalnya ke folder `Documents`. Copy path dari file `.pem` kalian.
 
@@ -243,6 +318,16 @@ Ganti `<Path Private Key>` dengan PATH yang dicatat sebelumnya.
 ![alt text](img/HO%202_2.png)
 
 Saat login pertama, akan muncul pertanyaan _"Are you sure you want to continue connecting (yes/no)?"_ — ketik `yes`. Jika berhasil, prompt terminal akan berubah menampilkan nama user dan VM, menandakan kamu sekarang "berada" di dalam VM, bukan di komputer lokal lagi.
+
+#### PASSWORD
+
+Jika kalian menggunakan password untuk masuk ke dalam VM, maka kalian bisa langsung akses menggunakan terminal kalian
+``` bash
+ssh azureuser@20.24.202.187
+```
+<img width="498" height="92" alt="image" src="https://github.com/user-attachments/assets/46edb70b-b021-444b-9a1d-bd9531eef90f" />
+
+Masukkan password yang sudah kalian buat saat pembuatan VM
 
 ---
 
@@ -281,5 +366,21 @@ Kamu akan melihat daftar file di folder VM ditampilkan sebagai halaman web. Ini 
 > Jika halaman tidak muncul, kemungkinan besar port 8000 belum diizinkan di Inbound port rules — kembali ke Azure Portal, buka **VM → Networking → Add inbound port rule**, izinkan port 8000.
 
 Tekan `Ctrl+C` di terminal VM untuk menghentikan server setelah selesai tes.
+---
+
+## Cara Hapus Resource yang sudah kalian buat
+
+### Virtual Machine
+
+Kalian masuk ke portal azure dan pilih VM yang baru kalian buat, klik **Delete** untuk menghapus VM.
+<img width="1871" height="894" alt="image" src="https://github.com/user-attachments/assets/1df07362-6121-4637-b055-e31658763d0e" />
+
+### Resource Group
+
+Sama seperti menghapus VM, kalian masuk ke Resource group yang sudah kalian buat dan klik **Delete**.
+<img width="1288" height="864" alt="image" src="https://github.com/user-attachments/assets/ed31a9c1-ffc0-47db-b8fd-6fa518050007" />
+
+
+
 
 ---
