@@ -62,7 +62,7 @@ You should see a line like:
 Starting Breakout LB demo, hostname injected as: vm-team01-danish
 ```
 
-If it says `unknown` instead, `$(hostname)` did not resolve to anything on
+If it says `unknown` instead, `$(whoami)` did not resolve to anything on
 this shell, check with a plain `hostname` command on its own first.
 
 ## 4. Open the NSG rule for port 8080
@@ -84,7 +84,7 @@ and in the block wall, matches this VM's actual hostname.
 ## 6. Repeat on the second VM
 
 Same three steps: build (or just run, if you push the image to a registry
-instead of rebuilding on each VM), run with `-e VM_HOSTNAME=$(hostname)`,
+instead of rebuilding on each VM), run with `-e VM_HOSTNAME=$(whoami)`,
 open the NSG rule. Confirm the second VM shows a different hostname than
 the first before moving on to the load balancer setup.
 
