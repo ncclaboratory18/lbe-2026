@@ -15,19 +15,24 @@ the same VNet/subnet with no internet access at all.
 
 So the plan is:
 
-1. **`budi`** (master) has internet → install Docker normally, clone the
-   repo, build the image.
-2. **`budi`** has no internet route to `aji`/`andi`/`etc.` from your
-   laptop directly — but `budi` itself *can* reach them, because they're
-   all in the same VNet. So `budi` becomes your jump box.
-3. Docker on the offline VMs (`aji`, `andi`, `etc.`) gets installed from
-   `.deb` files downloaded on `budi` and copied over with `scp` — no
-   internet needed on those three.
-4. The image gets built once on `budi`, saved to a `.tar` file, and copied
+1. **`budi`** (master) has internet → we use it to download everything
+   needed: the repo, the Docker `.deb` packages, and the built image.
+2. **`budi`** has no direct route from your laptop to `aji`/`andi`/`etc.`
+   — but `budi` itself *can* reach them, because they're all in the same
+   VNet. So `budi` becomes your jump box for everything.
+3. **All four VMs, including `budi`, install Docker the same way**: from
+   `.deb` files, offline (`dpkg -i`), for consistency. `budi` downloads
+   the `.deb`s (it has internet), then installs from them locally exactly
+   like the other three do — nobody uses the online `install-docker.sh`
+   path, so all 4 VMs go through an identical set of commands.
+4. The image gets built once on `budi` (it's the only VM that can reach
+   the internet to pull base layers), saved to a `.tar` file, and copied
    to the other three with `scp`, then loaded there — so nobody else needs
-   to `docker build`.
+   to `docker build`. `budi` then loads and runs from that same `.tar`
+   too, rather than the freshly-built image directly, so its runtime setup
+   matches the other three step-for-step.
 5. Every VM runs the container with its own hostname baked in via
-   `-e VM_HOSTNAME=$(hostname)`, exactly like the normal INSTALL.md flow —
+   `-e VM_HOSTNAME=$(whoami)`, exactly like the normal INSTALL.md flow —
    so the demo still shows "who answered this request" correctly.
 
 You will run every command yourself, one at a time, so you understand what
@@ -43,7 +48,7 @@ You need, from whoever set up the VMs:
 - The **private IP addresses** (not public — they don't have one) of
   `aji`, `andi`, and `etc.` inside the VNet. Ask your instructor, or once
   you're on `budi` you can often find them from the Azure Portal's VM
-  overview page.
+  overview page, or by checking `/etc/hosts` if it was pre-populated.
 - The same SSH key or credentials should work for all 4 VMs, since they
   were provisioned together for this event — confirm with your instructor
   if unsure.
@@ -55,7 +60,7 @@ Throughout this guide:
 
 ---
 
-## Part 1 — Set up the master VM (`budi`)
+## Part 1 — Get the repo onto the master VM (`budi`)
 
 ### 1.1 SSH into budi
 
@@ -65,100 +70,27 @@ From your laptop:
 ssh <username>@<budi_public_ip>
 ```
 
-You're now on `budi`. Everything in Part 1 happens here.
+You're now on `budi`. Everything in Parts 1–3 happens here.
 
-### 1.2 Install Docker the normal (online) way
-
-`budi` has internet, so use the same install script the rest of the class
-uses. First, clone the repo:
+### 1.2 Clone the repo
 
 ```bash
 git clone https://github.com/ncclaboratory18/lbe-2026.git
 cd lbe-2026/module-3/breakout-lb-demo
 ```
 
-Then install Docker:
-
-```bash
-chmod +x install-docker.sh
-sudo ./install-docker.sh
-```
-
-If you hit this error later when running `docker` commands:
-
-```
-permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
-```
-
-run:
-
-```bash
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-Confirm Docker is working:
-
-```bash
-docker version
-```
-
-### 1.3 Build the image on budi
-
-Still inside `~/lbe-2026/module-3/breakout-lb-demo`:
-
-```bash
-docker build -t breakout-lb-demo .
-```
-
-This may take a minute the first time as it pulls base layers from the
-internet — this is the *only* VM where that internet-dependent step
-happens.
-
-### 1.4 Run the container on budi itself
-
-`budi` is also one of the 4 backends in this demo, so it runs the
-container too:
-
-```bash
-docker run -d --name breakout -p 8080:8080 -e VM_HOSTNAME=$(hostname) breakout-lb-demo
-```
-
-Check the logs:
-
-```bash
-docker logs breakout
-```
-
-You should see something like:
-
-```
-Starting Breakout LB demo, hostname injected as: budi
-```
-
-### 1.5 Open port 8080 on budi's NSG
-
-In the Azure Portal, go to `budi`'s Networking page and add an inbound
-rule allowing TCP port 8080, if it isn't already open.
-
-### 1.6 Verify budi from your own laptop
-
-Open a **new terminal on your laptop** (don't close your SSH session to
-budi, you'll need it):
-
-```bash
-curl -s http://<budi_public_ip>:8080/ | head -5
-```
-
-You should get HTML back, and the hostname shown should say `budi`.
+We will **not** use `install-docker.sh` here, even though `budi` has
+internet and could. To keep every VM's setup identical and easy to reason
+about, all four VMs — `budi` included — install Docker from `.deb` files
+offline. `budi`'s job is to download those `.deb`s for everyone, since
+it's the only VM that can reach the internet.
 
 ---
 
-## Part 2 — Download Docker's offline installer files (still on budi)
+## Part 2 — Download Docker's offline installer files (on budi)
 
-Go back to your SSH session on `budi`. You'll now prepare the `.deb`
-packages that `aji`, `andi`, and `etc.` need, since they have no internet
-to download these themselves.
+You'll now prepare the `.deb` packages that all four VMs need —
+including `budi` itself.
 
 ### 2.1 Add Docker's official APT repository (if not already present)
 
@@ -176,9 +108,6 @@ echo \
 
 sudo apt-get update
 ```
-
-> `install-docker.sh` from step 1.2 may have already done some or all of
-> this. Running it again is harmless — `apt-get update` just refreshes.
 
 ### 2.2 Download the .deb packages (don't install — just download)
 
@@ -203,13 +132,51 @@ You should see around 6–8 `.deb` files, including `docker-ce`,
 `--download-only` guarantees apt resolves and downloads the *complete*
 dependency tree for you — no need to hunt down each dependency by hand.
 
+### 2.3 Install Docker on budi itself, from these same .deb files
+
+This is the step that keeps `budi` consistent with the other three — even
+though `budi` has internet, we install from the local `.deb`s, not from
+apt directly:
+
+```bash
+cd ~/docker-offline-debs
+sudo dpkg -i *.deb
+sudo systemctl enable --now docker
+```
+
+Fix permissions if needed:
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+Confirm Docker is working:
+
+```bash
+docker version
+```
+
 ---
 
-## Part 3 — Save the built image to a file (still on budi)
+## Part 3 — Build and save the image (on budi)
 
-The other 3 VMs don't need to build the image themselves (they have no
-internet to pull base layers anyway) — they just need the final image
-that `budi` already built.
+`budi` is the only VM that can reach the internet to pull base image
+layers, so it's the only one that runs `docker build`.
+
+### 3.1 Build the image
+
+```bash
+cd ~/lbe-2026/module-3/breakout-lb-demo
+docker build -t breakout-lb-demo .
+```
+
+### 3.2 Save the image to a file
+
+Even though `budi` has the freshly-built image sitting in its local
+Docker already, we still save it to a `.tar` and load it back in the next
+step — so `budi`'s run command is identical to what `aji`/`andi`/`etc.`
+will do, instead of being a special case:
 
 ```bash
 docker save breakout-lb-demo -o ~/breakout-lb-demo.tar
@@ -217,24 +184,17 @@ ls -lh ~/breakout-lb-demo.tar
 ```
 
 This `.tar` file contains the complete image, ready to be loaded on any
-other Docker host with `docker load`.
+Docker host with `docker load` — including `budi` itself.
 
 ---
 
-## Part 4 — Copy everything from budi to the other 3 VMs
+## Part 4 — Copy the .deb files and image to the other 3 VMs
 
 Still on `budi`, `scp` the `.deb` files and the saved image to each of
 `aji`, `andi`, and `etc.` in turn. Repeat this whole block 3 times,
 substituting the right IP each time.
 
 ### 4.1 Copy to aji
-
-```bash
-scp ~/docker-offline-debs/*.deb <username>@<aji_ip>:~/docker-offline-debs/
-```
-
-If that fails because the remote folder doesn't exist yet, create it
-first:
 
 ```bash
 ssh <username>@<aji_ip> "mkdir -p ~/docker-offline-debs"
@@ -268,6 +228,7 @@ scp ~/breakout-lb-demo.tar <username>@<etc_ip>:~/
 ## Part 5 — Install Docker offline on each of the 3 VMs
 
 Repeat this entire part on `aji`, `andi`, and `etc.` — one VM at a time.
+This is the exact same sequence you already ran on `budi` in step 2.3.
 You can either SSH to each directly from your laptop if your network
 allows routing into the VNet, or (more likely) SSH into `budi` first and
 then SSH onward from there:
@@ -312,9 +273,14 @@ docker version
 
 ---
 
-## Part 6 — Load and run the image on each of the 3 VMs
+## Part 6 — Load and run the image on every VM (budi, aji, andi, etc.)
 
-Still on the same VM (`aji`, `andi`, or `etc.`):
+This part is now identical across **all four VMs**, `budi` included —
+that's the whole point of routing `budi` through the same `.tar`
+load-and-run flow instead of leaving it on the image it built directly in
+step 3.1.
+
+Run this on `budi` first, then repeat it on `aji`, `andi`, and `etc.`.
 
 ### 6.1 Load the image from the tar file
 
@@ -332,11 +298,11 @@ You should see `breakout-lb-demo` listed.
 
 ### 6.2 Run the container
 
-Same command as on `budi` — this is the important part, since
-`$(hostname)` picks up *this* VM's own hostname automatically:
+`$(whoami)` picks up *this* VM's own hostname automatically, so this
+exact same command is correct on every VM:
 
 ```bash
-docker run -d --name breakout -p 8080:8080 -e VM_HOSTNAME=$(hostname) breakout-lb-demo
+docker run -d --name breakout -p 8080:8080 -e VM_HOSTNAME=$(whoami) breakout-lb-demo
 ```
 
 ### 6.3 Check the logs
@@ -345,7 +311,7 @@ docker run -d --name breakout -p 8080:8080 -e VM_HOSTNAME=$(hostname) breakout-l
 docker logs breakout
 ```
 
-Confirm the hostname shown matches the VM you're on, e.g.:
+Confirm the hostname shown matches the VM you're on, e.g. on `aji`:
 
 ```
 Starting Breakout LB demo, hostname injected as: aji
@@ -353,31 +319,38 @@ Starting Breakout LB demo, hostname injected as: aji
 
 ### 6.4 Open port 8080 on this VM's NSG
 
-Even though `aji`/`andi`/`etc.` have no public IP, the load balancer
-still needs to reach them over the VNet on port 8080. In the Azure
-Portal, go to this VM's Networking page and add an inbound rule allowing
-TCP port 8080 from the VNet (or from "Any" if that's how your NSGs are
-already configured for the other VMs in this class).
+In the Azure Portal, go to this VM's Networking page and add an inbound
+rule allowing TCP port 8080, if it isn't already open. For `aji`/`andi`/
+`etc.`, this only needs to allow traffic from within the VNet (or "Any",
+if that's how your NSGs are already configured for this class) — they
+have no public IP for the outside world to reach anyway.
 
-### 6.5 Verify from budi (not from your laptop — this VM has no public IP)
+### 6.5 Verify
 
-Since you can't reach `aji`/`andi`/`etc.` directly from your laptop, test
-from `budi` instead, which is on the same VNet:
+- **On `budi`**, which has a public IP, verify from your own laptop:
 
-```bash
-curl -s http://<aji_ip>:8080/ | head -5
-```
+  ```bash
+  curl -s http://<budi_public_ip>:8080/ | head -5
+  ```
 
-You should get HTML back with `aji`'s hostname in it.
+- **On `aji`/`andi`/`etc.`**, which have no public IP, verify from
+  `budi` instead, since it's on the same VNet:
+
+  ```bash
+  curl -s http://<aji_ip>:8080/ | head -5
+  ```
+
+Either way, you should get HTML back with that VM's hostname in it.
 
 ---
 
-## Part 7 — Repeat Part 5 and 6 for the remaining VMs
+## Part 7 — Repeat Parts 5 and 6 for the remaining VMs
 
-Once one of `aji`/`andi`/`etc.` is confirmed working, repeat Parts 5 and 6
-exactly the same way for the next VM, then the last one. By the end, all
-4 VMs (`budi`, `aji`, `andi`, `etc.`) should each be running the
-container and each report their own distinct hostname when curled.
+Once `aji` is confirmed working, repeat Parts 5 and 6 exactly the same
+way for `andi`, then `etc.`. By the end, all four VMs (`budi`, `aji`,
+`andi`, `etc.`) should each be running the container from the same
+`.tar`-loaded image and each report their own distinct hostname when
+curled.
 
 ---
 
@@ -401,6 +374,15 @@ refresh repeatedly:
 http://<load_balancer_public_ip>:8080
 ```
 
+Or you can do a curl loop from your local computer to the load balancer's public IP:
+
+```bash
+   for i in $(seq 1 10); do
+     curl -s http://<load_balancer_public_ip>/config.js
+     echo ""
+   done
+```
+
 The hostname shown on screen should rotate between `budi`, `aji`,
 `andi`, and `etc.` as the load balancer distributes requests — even
 though 3 of those 4 machines have never had a public IP or direct
@@ -415,5 +397,5 @@ internet access at any point in this setup.
 | `dpkg -i *.deb` fails with dependency errors | A `.deb` was missed in step 2.2 or not copied in Part 4 — re-check `ls ~/docker-offline-debs` on both `budi` and the target VM |
 | `permission denied ... docker.sock` | Run `sudo usermod -aG docker $USER && newgrp docker` on that VM |
 | `curl` from your laptop to `aji`/`andi`/`etc.` hangs or fails | Expected — they have no public IP. Curl from `budi` instead |
-| Hostname shown is `unknown` | `$(hostname)` didn't resolve in that shell — run plain `hostname` on its own first to confirm it returns something |
+| Hostname shown is `unknown` | `$(whoami)` didn't resolve in that shell — run plain `hostname` on its own first to confirm it returns something |
 | `scp` to `aji`/`andi`/`etc.` fails from your laptop | Expected — only `budi` is reachable from outside the VNet. Always `scp`/`ssh` to these three *from budi* |
