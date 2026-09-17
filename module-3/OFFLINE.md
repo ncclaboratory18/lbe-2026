@@ -1,5 +1,7 @@
 # Load Balancer Demo — Offline Docker Setup (4 VMs, 1 Public IP)
 
+Link youtube tutorial: https://youtu.be/67Ws9YZIilE
+
 ## Why this guide exists
 
 Normally you'd install Docker on every VM the easy way — the online method in
@@ -46,12 +48,22 @@ You need, from whoever set up the VMs:
 
 - SSH access to `budi` (the master VM), e.g. `ssh <user>@<budi_public_ip>`
 - The **private IP addresses** (not public — they don't have one) of
-  `aji`, `andi`, and `etc.` inside the VNet. Ask your instructor, or once
+  `aji`, `andi`, and `etc.` inside the VNet. Once
   you're on `budi` you can often find them from the Azure Portal's VM
   overview page, or by checking `/etc/hosts` if it was pre-populated.
+
+    Example:
+    ```
+    10.0.1.5 aji
+    10.0.1.6 andi
+    10.0.1.7 etc
+    ```
+
+    ![private-ip](./img/private-ip.png)
+
 - The same SSH key or credentials should work for all 4 VMs, since they
   were provisioned together for this event — confirm with your instructor
-  if unsure.
+  if unsure. Preferably using SSH key for the master VM (budi), and password for the rest.
 
 Throughout this guide:
 - `<budi_public_ip>` = the one public IP you were given
@@ -377,10 +389,10 @@ http://<load_balancer_public_ip>:8080
 Or you can do a curl loop from your local computer to the load balancer's public IP:
 
 ```bash
-   for i in $(seq 1 10); do
-     curl -s http://<load_balancer_public_ip>/config.js
-     echo ""
-   done
+for i in $(seq 1 10); do
+    curl -s http://<load_balancer_public_ip>/config.js
+    echo ""
+done
 ```
 
 The hostname shown on screen should rotate between `budi`, `aji`,
